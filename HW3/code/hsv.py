@@ -38,4 +38,4 @@ def hsv(image, lbp_image, sobel_image):
 
     # 使用形態學操作進一步填補小洞
     binary = cv2.morphologyEx(binary, cv2.MORPH_CLOSE, kernel)
-    return binary
+    return binary,combined_filtered

@@ -14,6 +14,7 @@ def plot_histogram(hist):
     plt.show()
 
 def find_top_three(hist):
-    sorted_values = sorted(hist.flatten(), reverse=True)
-    top_three = [int(idx) for  idx in sorted_values]
+    top_three_indices = np.argsort(hist, axis=0)[-3:][::-1].flatten() # 找到前三大值的索引並展平 
+    # 將結果轉換為可讀格式 
+    top_three = [int(idx) for idx in top_three_indices] 
     return top_three

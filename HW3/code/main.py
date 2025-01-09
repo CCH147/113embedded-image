@@ -12,7 +12,7 @@ import labeling
 def main():
     radius = 1
     n_points = 8  
-    patch_size = 10  
+    patch_size = 12
     # 讀取影像
     image = cv2.imread('C:\\Factory data\\1111\\123\\way.jpg')
     #image_gray = cv2.imread('test.jpg',0)
@@ -29,16 +29,18 @@ def main():
     cv2.imwrite('lbp.jpg',lbp_img)
     
     #HSV
-    hsv_img,hsv1 = hsv.hsv(image, Sobel_img, lbp_img)
+    hsv_img,hsv1= hsv.hsv(image, Sobel_img, lbp_img)
     cv2.imwrite('hsv.jpg',hsv_img)
     hsv_lbp_img = lbp.lbp(hsv1)
     cv2.imwrite('hsv_lbp.jpg',hsv_lbp_img)
     #histogram
     mask = np.zeros_like(image_gray)  
+    marked_img = image.copy()
     #histogram找前三大(設定閥值)
-    his = histogram.calculate_histogram(hsv_lbp_img)
-    hist = histogram.plot_histogram(his)
+    his = histogram.calculate_histogram(image)
+    #hist = histogram.plot_histogram(his)
     top3 = histogram.find_top_three(his)
+    print(top3)
     th = int(sum(top3)/3)
     
     #BFS
@@ -53,14 +55,17 @@ def main():
                 hist2 = histogram.calculate_histogram(patch2)               
                 if one_norm_dist.calculate_1_norm_distance(hist1, hist2) <= th:
                     mask[i:i+patch_size, j:j+patch_size] = 1  
-    #labeling
-    colored_img = labeling.label_areas(hsv_img,image)
 
-    cv2.imwrite('final.jpg',colored_img)    
+    #colored_img = labeling.label_hsv_areas(hsv_img,image)
+    #color = labeling.label(image,hsv_img)
+    color = labeling.label_similar_areas(image,mask)
+
+    #cv2.imwrite('final.jpg',colored_img)    
+    cv2.imwrite('final_result.jpg',color) 
     
     # 顯示
     # 原始影像和著色後的影像
-    cv2.imshow('Colored Image', colored_img)
+    #cv2.imshow('Colored Image', colored_img)
     cv2.waitKey(0)
     cv2.destroyAllWindows()
 
